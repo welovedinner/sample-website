@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聚餐小助手</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        header { text-align: center; padding: 20px 0 30px; }
+        header h1 { font-size: 1.8rem; color: #333; }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-small { padding: 8px 16px; font-size: 0.9rem; }
+        .event-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .event-card h3 { font-size: 1.2rem; color: #333; margin-bottom: 12px; }
+        .event-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .event-info span { display: flex; align-items: center; gap: 4px; }
+        .event-note {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+        .participants { font-size: 0.85rem; color: #667eea; margin-bottom: 12px; }
+        .event-actions { display: flex; gap: 10px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: #555; }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 { font-size: 1.2rem; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #999; }
+        .empty-state p { margin-bottom: 20px; }
+        .loading { text-align: center; padding: 40px; color: #999; }
+        .error { text-align: center; padding: 20px; color: #e74c3c; background: #fdf2f2; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; }
+        footer { text-align: center; padding: 20px; color: #999; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍽️ 聚餐小助手</h1>
+        </header>
+
+        <div style="text-align: center; margin-bottom: 24px;">
+            <button class="btn" onclick="openCreateModal()">+ 发起聚餐</button>
+        </div>
+
+        <div id="events-list">
+            <div class="loading">加载中...</div>
+        </div>
+
+        <footer>Created by MiniMax Agent</footer>
+    </div>
+
+    <!-- 创建聚餐弹窗 -->
+    <div class="modal" id="create-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>发起聚餐</h2>
+                <button class="close-btn" onclick="closeCreateModal()">&times;</button>
+            </div>
+            <form id="create-form" onsubmit="createEvent(event)">
+                <div class="form-group">
+                    <label>活动名称 *</label>
+                    <input type="text" name="title" required placeholder="如：元宵节火锅">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>日期</label>
+                        <input type="text" name="date" placeholder="如：2/24">
+                    </div>
+                    <div class="form-group">
+                        <label>时间</label>
+                        <input type="text" name="time" placeholder="如：晚上7点">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>地点</label>
+                    <input type="text" name="location" placeholder="如：静安大悦城附近">
+                </div>
+                <div class="form-group">
+                    <label>发起人 *</label>
+                    <input type="text" name="organizer" required placeholder="你的称呼">
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <textarea name="note" rows="2" placeholder="其他说明..."></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">发布</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 加入聚餐弹窗 -->
+    <div class="modal" id="join-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>加入聚餐</h2>
+                <button class="close-btn" onclick="closeJoinModal()">&times;</button>
+            </div>
+            <form id="join-form" onsubmit="joinEvent(event)">
+                <input type="hidden" name="event-id" id="join-event-id">
+                <div class="form-group">
+                    <label>你的称呼 *</label>
+                    <input type="text" name="name" required placeholder="输入你的名字">
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">确认加入</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://xciikonomumkqweemukec.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaWlrb25vdW1rcXdlZW11a2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwNTQ1MjEsImV4cCI6MjA4NjYzMDUyMX0.491qXqrO1H4RNu8LMA_iYtN8DTTKolj3w9VOpV8dIFI';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function loadEvents() {
+            const container = document.getElementById('events-list');
+            try {
+                const { data, error } = await supabase
+                    .from('events')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Supabase error:', error);
+                    container.innerHTML = `<div class="error">⚠️ 数据库错误: ${error.message}<br><small>请确认 Supabase 表已创建且 RLS 策略正确</small></div>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <p>还没有聚餐活动</p>
+                            <p>点击上方按钮发起第一个！</p>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = data.map(event => `
+                    <div class="event-card">
+                        <h3>${escapeHtml(event.title)}</h3>
+                        <div class="event-info">
+                            ${event.date ? `<span>📅 ${escapeHtml(event.date)}</span>` : ''}
+                            ${event.time ? `<span>🕐 ${escapeHtml(event.time)}</span>` : ''}
+                            ${event.location ? `<span>📍 ${escapeHtml(event.location)}</span>` : ''}
+                            <span>👤 ${escapeHtml(event.organizer)}</span>
+                        </div>
+                        ${event.note ? `<div class="event-note">${escapeHtml(event.note)}</div>` : ''}
+                        <div class="participants">
+                            ${event.participants && event.participants.length > 0
+                                ? `已加入：${event.participants.map(p => escapeHtml(p)).join('、')}`
+                                : '暂无人加入'}
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn btn-small" onclick="openJoinModal('${event.id}')">我要加入</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('加载失败:', err);
+                container.innerHTML = `<div class="error">⚠️ 加载失败: ${err.message}</div>`;
+            }
+        }
+
+        async function createEvent(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const eventData = {
+                title: formData.get('title'),
+                date: formData.get('date') || null,
+                time: formData.get('time') || null,
+                location: formData.get('location') || null,
+                organizer: formData.get('organizer'),
+                note: formData.get('note') || null,
+                participants: [formData.get('organizer')]
+            };
+            try {
+                const { error } = await supabase.from('events').insert([eventData]);
+                if (error) throw error;
+                closeCreateModal();
+                form.reset();
+                loadEvents();
+                alert('发布成功！');
+            } catch (err) {
+                console.error('创建失败:', err);
+                alert('发布失败: ' + err.message);
+            }
+        }
+
+        async function joinEvent(e) {
+            e.preventDefault();
+            const form = e.target;
+            const eventId = document.getElementById('join-event-id').value;
+            const name = form.querySelector('input[name="name"]').value;
+            try {
+                const { data: event, error: fetchError } = await supabase
+                    .from('events')
+                    .select('participants')
+                    .eq('id', eventId)
+                    .single();
+                if (fetchError) throw fetchError;
+                const participants = event.participants || [];
+                if (participants.includes(name)) {
+                    alert('你已经加入了！');
+                    return;
+                }
+                participants.push(name);
+                const { error: updateError } = await supabase
+                    .from('events')
+                    .update({ participants })
+                    .eq('id', eventId);
+                if (updateError) throw updateError;
+                closeJoinModal();
+                form.reset();
+                loadEvents();
+                alert('加入成功！');
+            } catch (err) {
+                console.error('加入失败:', err);
+                alert('加入失败: ' + err.message);
+            }
+        }
+
+        function openCreateModal() { document.getElementById('create-modal').classList.add('active'); }
+        function closeCreateModal() { document.getElementById('create-modal').classList.remove('active'); }
+        function openJoinModal(eventId) {
+            document.getElementById('join-event-id').value = eventId;
+            document.getElementById('join-modal').classList.add('active');
+        }
+        function closeJoinModal() { document.getElementById('join-modal').classList.remove('active'); }
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+        });
+        loadEvents();
+    </script>
+</body>
+</html>
