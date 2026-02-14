@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>聚餐小助手</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -183,24 +182,39 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://xciikonomumkqweemukec.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaWlrb25vdW1rcXdlZW11a2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwNTQ1MjEsImV4cCI6MjA4NjYzMDUyMX0.491qXqrO1H4RNu8LMA_iYtN8DTTKolj3w9VOpV8dIFI';
+        // Supabase REST API 配置
+        const SUPABASE_URL = 'https://xciikonoumkqweemukec.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaWlrb25vdW1rcXdlZW11a2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwNTQ1MjEsImV4cCI6MjA4NjYzMDUyMX0.491qXqrO1H4RNu8LMA_iYtN8DTTKolj3w9VOpV8dIFI';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // 通用 fetch 函数
+        async function supabaseFetch(endpoint, options = {}) {
+            const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
+            const headers = {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': options.prefer || 'return=representation'
+            };
 
+            const response = await fetch(url, {
+                ...options,
+                headers: { ...headers, ...options.headers }
+            });
+
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(error || response.statusText);
+            }
+
+            const text = await response.text();
+            return text ? JSON.parse(text) : null;
+        }
+
+        // 加载活动列表
         async function loadEvents() {
             const container = document.getElementById('events-list');
             try {
-                const { data, error } = await supabase
-                    .from('events')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) {
-                    console.error('Supabase error:', error);
-                    container.innerHTML = `<div class="error">⚠️ 数据库错误: ${error.message}<br><small>请确认 Supabase 表已创建且 RLS 策略正确</small></div>`;
-                    return;
-                }
+                const data = await supabaseFetch('events?order=created_at.desc');
 
                 if (!data || data.length === 0) {
                     container.innerHTML = `
@@ -233,10 +247,11 @@
                 `).join('');
             } catch (err) {
                 console.error('加载失败:', err);
-                container.innerHTML = `<div class="error">⚠️ 加载失败: ${err.message}</div>`;
+                container.innerHTML = `<div class="error">⚠️ 加载失败: ${err.message}<br><small>请检查 Supabase 配置</small></div>`;
             }
         }
 
+        // 创建活动
         async function createEvent(e) {
             e.preventDefault();
             const form = e.target;
@@ -251,8 +266,10 @@
                 participants: [formData.get('organizer')]
             };
             try {
-                const { error } = await supabase.from('events').insert([eventData]);
-                if (error) throw error;
+                await supabaseFetch('events', {
+                    method: 'POST',
+                    body: JSON.stringify(eventData)
+                });
                 closeCreateModal();
                 form.reset();
                 loadEvents();
@@ -263,29 +280,32 @@
             }
         }
 
+        // 加入活动
         async function joinEvent(e) {
             e.preventDefault();
             const form = e.target;
             const eventId = document.getElementById('join-event-id').value;
             const name = form.querySelector('input[name="name"]').value;
             try {
-                const { data: event, error: fetchError } = await supabase
-                    .from('events')
-                    .select('participants')
-                    .eq('id', eventId)
-                    .single();
-                if (fetchError) throw fetchError;
+                // 获取当前参与者
+                const events = await supabaseFetch(`events?id=eq.${eventId}`);
+                if (!events || events.length === 0) throw new Error('活动不存在');
+
+                const event = events[0];
                 const participants = event.participants || [];
+
                 if (participants.includes(name)) {
                     alert('你已经加入了！');
                     return;
                 }
                 participants.push(name);
-                const { error: updateError } = await supabase
-                    .from('events')
-                    .update({ participants })
-                    .eq('id', eventId);
-                if (updateError) throw updateError;
+
+                // 更新参与者
+                await supabaseFetch(`events?id=eq.${eventId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ participants })
+                });
+
                 closeJoinModal();
                 form.reset();
                 loadEvents();
@@ -296,6 +316,7 @@
             }
         }
 
+        // 弹窗控制
         function openCreateModal() { document.getElementById('create-modal').classList.add('active'); }
         function closeCreateModal() { document.getElementById('create-modal').classList.remove('active'); }
         function openJoinModal(eventId) {
@@ -303,17 +324,23 @@
             document.getElementById('join-modal').classList.add('active');
         }
         function closeJoinModal() { document.getElementById('join-modal').classList.remove('active'); }
+
+        // 防 XSS
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
+
+        // 点击弹窗外部关闭
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) modal.classList.remove('active');
             });
         });
+
+        // 初始化
         loadEvents();
     </script>
 </body>
