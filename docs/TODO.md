@@ -20,40 +20,40 @@
 
 ### 1. places（B 组核心）
 
-- [ ] 创建表 `places`
-  - [ ] id (uuid, pk)
-  - [ ] title (text, not null)
-  - [ ] description (text, nullable)
-  - [ ] created_at (timestamptz, default now())
-  - [ ] created_by (text)
-  - [ ] status (text, default 'active')
+- [x] 创建表 `places`
+  - [x] id (uuid, pk)
+  - [x] title (text, not null)
+  - [x] description (text, nullable)
+  - [x] created_at (timestamptz, default now())
+  - [x] created_by (text)
+  - [x] status (text, default 'active')
 
 ---
 
 ### 2. place_comments（B 组补充）
 
-- [ ] 创建表 `place_comments`
-  - [ ] id (uuid, pk)
-  - [ ] place_id (uuid, fk → places.id)
-  - [ ] content (text)
-  - [ ] created_at (timestamptz, default now())
-  - [ ] created_by (text)
-  - [ ] image_urls (text[])
+- [x] 创建表 `place_comments`
+  - [x] id (uuid, pk)
+  - [x] place_id (uuid, fk → places.id)
+  - [x] content (text)
+  - [x] created_at (timestamptz, default now())
+  - [x] created_by (text)
+  - [x] image_urls (text[])
 
 ---
 
 ### 3. events（A 组，占位即可）
 
-- [x] 创建表 `events`（已有基础版本，需升级）
+- [x] 创建表 `events`
   - [x] id (uuid, pk)
   - [x] title (text)
-  - [ ] place_id (uuid, nullable)
-  - [ ] time_start (timestamptz)
-  - [ ] time_end (timestamptz, nullable)
-  - [ ] location_text (text)
+  - [x] place_id (uuid, nullable)
+  - [x] time_start (timestamptz)
+  - [x] time_end (timestamptz, nullable)
+  - [x] location_text (text)
   - [x] created_at (timestamptz, default now())
-  - [ ] created_by (text)
-  - [ ] status (text, default 'open')
+  - [x] created_by (text)
+  - [x] status (text, default 'open')
 
 > ⚠️ 本阶段不需要 UI，仅建表
 
@@ -61,12 +61,12 @@
 
 ### 4. event_participants（A 组，占位）
 
-- [ ] 创建表 `event_participants`
-  - [ ] id (uuid, pk)
-  - [ ] event_id (uuid, fk → events.id)
-  - [ ] display_name (text)
-  - [ ] intent (text)
-  - [ ] created_at (timestamptz, default now())
+- [x] 创建表 `event_participants`
+  - [x] id (uuid, pk)
+  - [x] event_id (uuid, fk → events.id)
+  - [x] display_name (text)
+  - [x] intent (text)
+  - [x] created_at (timestamptz, default now())
 
 ---
 
