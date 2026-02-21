@@ -38,6 +38,7 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .btn-outline { background: white; color: #667eea; border: 1px solid #667eea; }
         .btn-outline:hover { background: #f8f9ff; box-shadow: none; transform: none; }
         .btn-small { padding: 8px 16px; font-size: 0.85rem; }
@@ -98,8 +99,82 @@
         .comment { padding: 12px; background: #fafafa; border-radius: 8px; margin-bottom: 8px; }
         .comment-header { font-size: 0.85rem; color: #888; margin-bottom: 6px; }
         .comment-content { font-size: 0.95rem; color: #333; }
-        .comment-form { margin-top: 16px; display: flex; gap: 8px; }
-        .comment-form input { flex: 1; }
+        .comment-images { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .comment-images img { 
+            max-width: 150px; 
+            max-height: 150px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+        .comment-images img:hover { opacity: 0.9; }
+
+        /* Comment Form with Image Upload */
+        .comment-form-wrapper { margin-top: 16px; background: #f9f9f9; border-radius: 12px; padding: 12px; }
+        .comment-input-row { display: flex; gap: 8px; }
+        .comment-input-row input { flex: 1; }
+        
+        /* Image Upload */
+        .image-upload-area { margin-top: 10px; }
+        .image-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: white;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #666;
+            transition: border-color 0.2s;
+        }
+        .image-upload-btn:hover { border-color: #667eea; color: #667eea; }
+        .image-upload-btn input { display: none; }
+        
+        .image-preview-list { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .image-preview-item { position: relative; }
+        .image-preview-item img { 
+            width: 80px; 
+            height: 80px; 
+            object-fit: cover; 
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .image-preview-item .remove-btn {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            background: #ff4d4f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .upload-hint { font-size: 0.75rem; color: #999; margin-top: 6px; }
+
+        /* Image Lightbox */
+        .lightbox { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); 
+            z-index: 3000; 
+            justify-content: center; 
+            align-items: center;
+            cursor: pointer;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; }
 
         /* Nickname Setup */
         .nickname-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; justify-content: center; align-items: center; z-index: 2000; }
@@ -124,7 +199,7 @@
     <!-- 昵称设置 (首次访问) -->
     <div class="nickname-overlay" id="nickname-overlay">
         <div class="nickname-box">
-            <h2>👋 欢迎使用聚餐小助手</h2>
+            <h2>欢迎使用聚餐小助手</h2>
             <p>请输入你的称呼，方便群友认出你</p>
             <div class="form-group">
                 <input type="text" id="nickname-input" placeholder="你的昵称" maxlength="20">
@@ -133,9 +208,14 @@
         </div>
     </div>
 
+    <!-- 图片预览 Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="预览">
+    </div>
+
     <div class="container">
         <header>
-            <h1>🍽️ 聚餐小助手</h1>
+            <h1>聚餐小助手</h1>
             <p id="welcome-text"></p>
         </header>
 
@@ -143,8 +223,8 @@
         <div id="main-view">
             <!-- Tabs -->
             <div class="tabs">
-                <div class="tab active" data-tab="places" onclick="switchTab('places')">💡 想法池</div>
-                <div class="tab" data-tab="events" onclick="switchTab('events')">📅 聚餐事件</div>
+                <div class="tab active" data-tab="places" onclick="switchTab('places')">想法池</div>
+                <div class="tab" data-tab="events" onclick="switchTab('events')">聚餐事件</div>
             </div>
 
             <!-- B组: 想法池 -->
@@ -166,7 +246,7 @@
                 </div>
                 <div id="events-list">
                     <div class="placeholder-card">
-                        <p>🚧 聚餐事件功能开发中</p>
+                        <p>聚餐事件功能开发中</p>
                         <p style="font-size: 0.85rem; margin-top: 8px;">敬请期待...</p>
                     </div>
                 </div>
@@ -186,7 +266,7 @@
     <div class="modal" id="create-place-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>💡 新建想法</h2>
+                <h2>新建想法</h2>
                 <button class="close-btn" onclick="closeCreatePlaceModal()">&times;</button>
             </div>
             <form id="create-place-form" onsubmit="createPlace(event)">
@@ -207,6 +287,15 @@
         // ============ 配置 ============
         const SUPABASE_URL = 'https://xciikonoumkqweemukec.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaWlrb25vdW1rcXdlZW11a2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwNTQ1MjEsImV4cCI6MjA4NjYzMDUyMX0.491qXqrO1H4RNu8LMA_iYtN8DTTKolj3w9VOpV8dIFI';
+        const STORAGE_BUCKET = 'images';
+
+        // 图片限制
+        const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
+        const MAX_IMAGE_COUNT = 3;
+        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+        // 待上传图片
+        let pendingImages = [];
 
         // ============ 通用 API ============
         async function supabaseFetch(endpoint, options = {}) {
@@ -224,6 +313,31 @@
             }
             const text = await response.text();
             return text ? JSON.parse(text) : null;
+        }
+
+        // ============ Storage API ============
+        async function uploadImage(file) {
+            const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${file.name.split('.').pop()}`;
+            const url = `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${fileName}`;
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': file.type,
+                    'x-upsert': 'true'
+                },
+                body: file
+            });
+            
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(error || '上传失败');
+            }
+            
+            // 返回公共 URL
+            return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${fileName}`;
         }
 
         // ============ 昵称管理 ============
@@ -292,15 +406,15 @@
                         <h3>${escapeHtml(place.title)}</h3>
                         ${place.description ? `<div class="card-desc">${escapeHtml(place.description)}</div>` : ''}
                         <div class="card-meta">
-                            <span>👤 ${escapeHtml(place.created_by || '匿名')}</span>
-                            <span>💬 ${commentCounts[place.id] || 0} 条补充</span>
-                            <span>📅 ${formatDate(place.created_at)}</span>
+                            <span>${escapeHtml(place.created_by || '匿名')}</span>
+                            <span>${commentCounts[place.id] || 0} 条补充</span>
+                            <span>${formatDate(place.created_at)}</span>
                         </div>
                     </div>
                 `).join('');
             } catch (err) {
                 console.error('加载失败:', err);
-                container.innerHTML = `<div class="empty"><p>⚠️ 加载失败: ${err.message}</p></div>`;
+                container.innerHTML = `<div class="empty"><p>加载失败: ${err.message}</p></div>`;
             }
         }
 
@@ -336,6 +450,7 @@
 
         async function openPlaceDetail(placeId) {
             currentPlaceId = placeId;
+            pendingImages = []; // 清空待上传图片
             document.getElementById('main-view').style.display = 'none';
             document.getElementById('detail-view').style.display = 'block';
 
@@ -361,18 +476,30 @@
                     ${place.description ? `<div class="detail-desc">${escapeHtml(place.description)}</div>` : ''}
 
                     <div class="comments-section">
-                        <h3>💬 补充信息 (${comments ? comments.length : 0})</h3>
+                        <h3>补充信息 (${comments ? comments.length : 0})</h3>
                         <div id="comments-list">
                             ${comments && comments.length > 0 ? comments.map(c => `
                                 <div class="comment">
                                     <div class="comment-header">${escapeHtml(c.created_by || '匿名')} · ${formatDate(c.created_at)}</div>
                                     <div class="comment-content">${escapeHtml(c.content)}</div>
+                                    ${renderCommentImages(c.image_urls)}
                                 </div>
                             `).join('') : '<p style="color: #999; font-size: 0.9rem;">暂无补充，来添加第一条吧</p>'}
                         </div>
-                        <div class="comment-form">
-                            <input type="text" id="comment-input" placeholder="添加补充信息...">
-                            <button class="btn btn-small" onclick="addComment()">发送</button>
+                        
+                        <div class="comment-form-wrapper">
+                            <div class="comment-input-row">
+                                <input type="text" id="comment-input" placeholder="添加补充信息...">
+                                <button class="btn btn-small" id="send-btn" onclick="addComment()">发送</button>
+                            </div>
+                            <div class="image-upload-area">
+                                <label class="image-upload-btn">
+                                    <span>+ 添加图片</span>
+                                    <input type="file" id="image-input" accept="image/jpeg,image/png,image/webp" multiple onchange="handleImageSelect(event)">
+                                </label>
+                                <div class="upload-hint">支持 jpg/png/webp，单张最大 2MB，最多 3 张</div>
+                                <div class="image-preview-list" id="image-preview-list"></div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -381,33 +508,133 @@
             }
         }
 
+        // 渲染评论图片
+        function renderCommentImages(imageUrls) {
+            if (!imageUrls || imageUrls.length === 0) return '';
+            return `
+                <div class="comment-images">
+                    ${imageUrls.map(url => `<img src="${url}" alt="评论图片" onclick="openLightbox('${url}')">`).join('')}
+                </div>
+            `;
+        }
+
+        // ============ 图片上传相关 ============
+        function handleImageSelect(event) {
+            const files = Array.from(event.target.files);
+            
+            for (const file of files) {
+                // 检查数量限制
+                if (pendingImages.length >= MAX_IMAGE_COUNT) {
+                    alert(`最多上传 ${MAX_IMAGE_COUNT} 张图片`);
+                    break;
+                }
+                
+                // 检查文件类型
+                if (!ALLOWED_TYPES.includes(file.type)) {
+                    alert(`不支持的文件格式: ${file.name}\n仅支持 jpg/png/webp`);
+                    continue;
+                }
+                
+                // 检查文件大小
+                if (file.size > MAX_IMAGE_SIZE) {
+                    alert(`图片太大: ${file.name}\n单张图片不能超过 2MB`);
+                    continue;
+                }
+                
+                pendingImages.push(file);
+            }
+            
+            // 清空 input（允许重复选择同一文件）
+            event.target.value = '';
+            
+            renderImagePreviews();
+        }
+
+        function renderImagePreviews() {
+            const container = document.getElementById('image-preview-list');
+            if (!container) return;
+            
+            container.innerHTML = pendingImages.map((file, index) => `
+                <div class="image-preview-item">
+                    <img src="${URL.createObjectURL(file)}" alt="预览">
+                    <button class="remove-btn" onclick="removeImage(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removeImage(index) {
+            pendingImages.splice(index, 1);
+            renderImagePreviews();
+        }
+
         async function addComment() {
             const input = document.getElementById('comment-input');
+            const sendBtn = document.getElementById('send-btn');
             const content = input.value.trim();
-            if (!content) return;
+            
+            if (!content && pendingImages.length === 0) {
+                alert('请输入内容或添加图片');
+                return;
+            }
+
+            // 禁用按钮，防止重复提交
+            sendBtn.disabled = true;
+            sendBtn.textContent = '发送中...';
 
             try {
+                // 上传图片
+                let imageUrls = [];
+                if (pendingImages.length > 0) {
+                    sendBtn.textContent = '上传图片...';
+                    for (const file of pendingImages) {
+                        const url = await uploadImage(file);
+                        imageUrls.push(url);
+                    }
+                }
+
+                // 创建评论
                 await supabaseFetch('place_comments', {
                     method: 'POST',
                     body: JSON.stringify({
                         place_id: currentPlaceId,
-                        content: content,
-                        created_by: getNickname()
+                        content: content || '(图片)',
+                        created_by: getNickname(),
+                        image_urls: imageUrls.length > 0 ? imageUrls : null
                     })
                 });
+                
                 input.value = '';
+                pendingImages = [];
                 openPlaceDetail(currentPlaceId); // 刷新
             } catch (err) {
                 alert('发送失败: ' + err.message);
+                sendBtn.disabled = false;
+                sendBtn.textContent = '发送';
             }
         }
 
         function closeDetail() {
             currentPlaceId = null;
+            pendingImages = [];
             document.getElementById('detail-view').style.display = 'none';
             document.getElementById('main-view').style.display = 'block';
             loadPlaces();
         }
+
+        // ============ 图片预览 Lightbox ============
+        function openLightbox(url) {
+            document.getElementById('lightbox-img').src = url;
+            document.getElementById('lightbox').classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        // ESC 关闭 lightbox
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
 
         // ============ 弹窗控制 ============
         function openCreatePlaceModal() { document.getElementById('create-place-modal').classList.add('active'); }
