@@ -12,191 +12,82 @@
             min-height: 100vh;
         }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-
-        /* Header */
         header { text-align: center; padding: 20px 0; }
         header h1 { font-size: 1.6rem; color: #333; }
         header p { color: #888; font-size: 0.9rem; margin-top: 4px; }
-
-        /* Tabs */
         .tabs { display: flex; margin-bottom: 20px; background: white; border-radius: 12px; padding: 4px; }
         .tab { flex: 1; padding: 12px; text-align: center; border-radius: 10px; cursor: pointer; font-size: 0.95rem; transition: all 0.2s; }
         .tab.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
         .tab:not(.active) { color: #666; }
         .tab:not(.active):hover { background: #f0f0f0; }
-
-        /* Button */
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+        .btn { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .btn-outline { background: white; color: #667eea; border: 1px solid #667eea; }
         .btn-outline:hover { background: #f8f9ff; box-shadow: none; transform: none; }
         .btn-small { padding: 8px 16px; font-size: 0.85rem; }
         .btn-block { width: 100%; }
-
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            cursor: pointer;
-            transition: box-shadow 0.2s;
-        }
+        .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.2s; }
         .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .card-has-images { background: linear-gradient(135deg, #f0f8ff 0%, #f5f0ff 100%); border-left: 3px solid #667eea; }
         .card h3 { font-size: 1.1rem; color: #333; margin-bottom: 8px; }
         .card-meta { font-size: 0.85rem; color: #888; display: flex; gap: 12px; flex-wrap: wrap; }
         .card-meta span { display: flex; align-items: center; gap: 4px; }
         .card-desc { font-size: 0.9rem; color: #666; margin: 8px 0; }
-
-        /* Empty State */
         .empty { text-align: center; padding: 60px 20px; color: #999; }
         .empty p { margin-bottom: 20px; }
-
-        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
         .modal.active { display: flex; }
         .modal-content { background: white; border-radius: 16px; padding: 24px; width: 90%; max-width: 400px; max-height: 85vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-header h2 { font-size: 1.2rem; }
         .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; }
-
-        /* Form */
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: #555; font-weight: 500; }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
         .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
-
-        /* Detail View */
         .detail-header { margin-bottom: 20px; }
         .detail-header h2 { font-size: 1.4rem; color: #333; margin-bottom: 8px; }
         .detail-meta { font-size: 0.85rem; color: #888; }
         .detail-desc { font-size: 1rem; color: #555; margin: 16px 0; padding: 12px; background: #f9f9f9; border-radius: 8px; }
         .back-btn { margin-bottom: 16px; color: #667eea; cursor: pointer; font-size: 0.9rem; }
         .back-btn:hover { text-decoration: underline; }
-
-        /* Comments */
         .comments-section { margin-top: 24px; }
         .comments-section h3 { font-size: 1rem; color: #666; margin-bottom: 12px; }
         .comment { padding: 12px; background: #fafafa; border-radius: 8px; margin-bottom: 8px; }
+        .comment-with-image { background: #f0f8ff; border-left: 3px solid #667eea; }
         .comment-header { font-size: 0.85rem; color: #888; margin-bottom: 6px; }
         .comment-content { font-size: 0.95rem; color: #333; }
         .comment-images { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-        .comment-images img { 
-            max-width: 150px; 
-            max-height: 150px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            object-fit: cover;
-            border: 1px solid #eee;
-        }
+        .comment-images img { max-width: 150px; max-height: 150px; border-radius: 8px; cursor: pointer; object-fit: cover; border: 1px solid #eee; }
         .comment-images img:hover { opacity: 0.9; }
-
-        /* Comment Form with Image Upload */
         .comment-form-wrapper { margin-top: 16px; background: #f9f9f9; border-radius: 12px; padding: 12px; }
         .comment-input-row { display: flex; gap: 8px; }
         .comment-input-row input { flex: 1; }
-        
-        /* Image Upload */
         .image-upload-area { margin-top: 10px; }
-        .image-upload-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 12px;
-            background: white;
-            border: 1px dashed #ccc;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            color: #666;
-            transition: border-color 0.2s;
-        }
+        .image-upload-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; background: white; border: 1px dashed #ccc; border-radius: 8px; cursor: pointer; font-size: 0.85rem; color: #666; transition: border-color 0.2s; }
         .image-upload-btn:hover { border-color: #667eea; color: #667eea; }
         .image-upload-btn input { display: none; }
-        
         .image-preview-list { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         .image-preview-item { position: relative; }
-        .image-preview-item img { 
-            width: 80px; 
-            height: 80px; 
-            object-fit: cover; 
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .image-preview-item .remove-btn {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            width: 20px;
-            height: 20px;
-            background: #ff4d4f;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 12px;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .image-preview-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+        .image-preview-item .remove-btn { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; background: #ff4d4f; color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center; }
         .upload-hint { font-size: 0.75rem; color: #999; margin-top: 6px; }
-
-        /* Image Lightbox */
-        .lightbox { 
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.9); 
-            z-index: 3000; 
-            justify-content: center; 
-            align-items: center;
-            cursor: pointer;
-        }
+        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; cursor: pointer; }
         .lightbox.active { display: flex; }
         .lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; }
-
-        /* Nickname Setup */
         .nickname-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .nickname-box { background: white; border-radius: 16px; padding: 32px; width: 90%; max-width: 360px; text-align: center; }
         .nickname-box h2 { margin-bottom: 8px; color: #333; }
         .nickname-box p { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
-
-        /* Loading */
         .loading { text-align: center; padding: 40px; color: #999; }
-
-        /* Section */
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .section-header h2 { font-size: 1.1rem; color: #555; }
-
-        /* A组占位 */
         .placeholder-card { background: #f9f9f9; border: 2px dashed #ddd; text-align: center; padding: 30px; color: #999; }
-
         footer { text-align: center; padding: 20px; color: #bbb; font-size: 0.75rem; }
     </style>
 </head>
 <body>
-    <!-- 昵称设置 (首次访问) -->
     <div class="nickname-overlay" id="nickname-overlay">
         <div class="nickname-box">
             <h2>欢迎使用聚餐小助手</h2>
@@ -207,38 +98,26 @@
             <button class="btn btn-block" onclick="saveNickname()">开始使用</button>
         </div>
     </div>
-
-    <!-- 图片预览 Lightbox -->
     <div class="lightbox" id="lightbox" onclick="closeLightbox()">
         <img id="lightbox-img" src="" alt="预览">
     </div>
-
     <div class="container">
         <header>
             <h1>聚餐小助手</h1>
             <p id="welcome-text"></p>
         </header>
-
-        <!-- 主视图 -->
         <div id="main-view">
-            <!-- Tabs -->
             <div class="tabs">
                 <div class="tab active" data-tab="places" onclick="switchTab('places')">想法池</div>
                 <div class="tab" data-tab="events" onclick="switchTab('events')">聚餐事件</div>
             </div>
-
-            <!-- B组: 想法池 -->
             <div id="places-section">
                 <div class="section-header">
                     <h2>大家的想法</h2>
                     <button class="btn btn-small" onclick="openCreatePlaceModal()">+ 新建</button>
                 </div>
-                <div id="places-list">
-                    <div class="loading">加载中...</div>
-                </div>
+                <div id="places-list"><div class="loading">加载中...</div></div>
             </div>
-
-            <!-- A组: 聚餐事件 -->
             <div id="events-section" style="display: none;">
                 <div class="section-header">
                     <h2>近期聚餐</h2>
@@ -252,17 +131,12 @@
                 </div>
             </div>
         </div>
-
-        <!-- 详情视图 -->
         <div id="detail-view" style="display: none;">
             <div class="back-btn" onclick="closeDetail()">← 返回列表</div>
             <div id="detail-content"></div>
         </div>
-
         <footer>Created by MiniMax Agent</footer>
     </div>
-
-    <!-- 新建想法弹窗 -->
     <div class="modal" id="create-place-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -282,383 +156,189 @@
             </form>
         </div>
     </div>
-
     <script>
-        // ============ 配置 ============
         const SUPABASE_URL = 'https://xciikonoumkqweemukec.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaWlrb25vdW1rcXdlZW11a2VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwNTQ1MjEsImV4cCI6MjA4NjYzMDUyMX0.491qXqrO1H4RNu8LMA_iYtN8DTTKolj3w9VOpV8dIFI';
         const STORAGE_BUCKET = 'images';
-
-        // 图片限制
-        const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
+        const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
         const MAX_IMAGE_COUNT = 3;
         const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
-        // 待上传图片
         let pendingImages = [];
 
-        // ============ 通用 API ============
         async function supabaseFetch(endpoint, options = {}) {
             const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
-            const headers = {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': options.prefer || 'return=representation'
-            };
+            const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': options.prefer || 'return=representation' };
             const response = await fetch(url, { ...options, headers: { ...headers, ...options.headers } });
-            if (!response.ok) {
-                const error = await response.text();
-                throw new Error(error || response.statusText);
-            }
+            if (!response.ok) { const error = await response.text(); throw new Error(error || response.statusText); }
             const text = await response.text();
             return text ? JSON.parse(text) : null;
         }
 
-        // ============ Storage API ============
         async function uploadImage(file) {
             const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${file.name.split('.').pop()}`;
             const url = `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${fileName}`;
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`,
-                    'Content-Type': file.type,
-                    'x-upsert': 'true'
-                },
-                body: file
-            });
-            
-            if (!response.ok) {
-                const error = await response.text();
-                throw new Error(error || '上传失败');
-            }
-            
-            // 返回公共 URL
+            const response = await fetch(url, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': file.type, 'x-upsert': 'true' }, body: file });
+            if (!response.ok) { const error = await response.text(); throw new Error(error || '上传失败'); }
             return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${fileName}`;
         }
 
-        // ============ 昵称管理 ============
-        function getNickname() {
-            return localStorage.getItem('dinner_nickname');
-        }
-
+        function getNickname() { return localStorage.getItem('dinner_nickname'); }
         function saveNickname() {
             const input = document.getElementById('nickname-input');
             const nickname = input.value.trim();
-            if (!nickname) {
-                alert('请输入昵称');
-                return;
-            }
+            if (!nickname) { alert('请输入昵称'); return; }
             localStorage.setItem('dinner_nickname', nickname);
             document.getElementById('nickname-overlay').style.display = 'none';
             document.getElementById('welcome-text').textContent = `Hi, ${nickname}`;
             loadPlaces();
         }
-
         function checkNickname() {
             const nickname = getNickname();
-            if (nickname) {
-                document.getElementById('nickname-overlay').style.display = 'none';
-                document.getElementById('welcome-text').textContent = `Hi, ${nickname}`;
-                return true;
-            }
+            if (nickname) { document.getElementById('nickname-overlay').style.display = 'none'; document.getElementById('welcome-text').textContent = `Hi, ${nickname}`; return true; }
             return false;
         }
 
-        // ============ Tab 切换 ============
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-
             document.getElementById('places-section').style.display = tab === 'places' ? 'block' : 'none';
             document.getElementById('events-section').style.display = tab === 'events' ? 'block' : 'none';
         }
 
-        // ============ Places (B组) ============
         async function loadPlaces() {
             const container = document.getElementById('places-list');
             try {
-                // 获取 places 和评论数
-                const places = await supabaseFetch('places?status=eq.active&order=created_at.desc');
-
-                if (!places || places.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty">
-                            <p>还没有任何想法</p>
-                            <button class="btn" onclick="openCreatePlaceModal()">+ 添加第一个</button>
-                        </div>`;
-                    return;
-                }
-
-                // 获取每个 place 的评论数
+                const places = await supabaseFetch('places?status=eq.active');
+                if (!places || places.length === 0) { container.innerHTML = `<div class="empty"><p>还没有任何想法</p><button class="btn" onclick="openCreatePlaceModal()">+ 添加第一个</button></div>`; return; }
                 const placeIds = places.map(p => p.id);
                 const comments = await supabaseFetch(`place_comments?place_id=in.(${placeIds.join(',')})`);
                 const commentCounts = {};
+                const latestCommentTime = {};
+                const hasImageComment = {};
                 (comments || []).forEach(c => {
                     commentCounts[c.place_id] = (commentCounts[c.place_id] || 0) + 1;
+                    const t = new Date(c.created_at).getTime();
+                    if (!latestCommentTime[c.place_id] || t > latestCommentTime[c.place_id]) {
+                        latestCommentTime[c.place_id] = t;
+                    }
+                    if (c.image_urls && c.image_urls.length > 0) {
+                        hasImageComment[c.place_id] = true;
+                    }
                 });
-
-                container.innerHTML = places.map(place => `
-                    <div class="card" onclick="openPlaceDetail('${place.id}')">
-                        <h3>${escapeHtml(place.title)}</h3>
-                        ${place.description ? `<div class="card-desc">${escapeHtml(place.description)}</div>` : ''}
-                        <div class="card-meta">
-                            <span>${escapeHtml(place.created_by || '匿名')}</span>
-                            <span>${commentCounts[place.id] || 0} 条补充</span>
-                            <span>${formatDate(place.created_at)}</span>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (err) {
-                console.error('加载失败:', err);
-                container.innerHTML = `<div class="empty"><p>加载失败: ${err.message}</p></div>`;
-            }
+                // 按最新活动时间排序（最新评论时间 或 创建时间）
+                places.sort((a, b) => {
+                    const aTime = latestCommentTime[a.id] || new Date(a.created_at).getTime();
+                    const bTime = latestCommentTime[b.id] || new Date(b.created_at).getTime();
+                    return bTime - aTime;
+                });
+                container.innerHTML = places.map(place => `<div class="card${hasImageComment[place.id] ? ' card-has-images' : ''}" onclick="openPlaceDetail('${place.id}')"><h3>${escapeHtml(place.title)}</h3>${place.description ? `<div class="card-desc">${escapeHtml(place.description)}</div>` : ''}<div class="card-meta"><span>${escapeHtml(place.created_by || '匿名')}</span><span>${commentCounts[place.id] || 0} 条补充</span><span>${formatDate(place.created_at)}</span></div></div>`).join('');
+            } catch (err) { console.error('加载失败:', err); container.innerHTML = `<div class="empty"><p>加载失败: ${err.message}</p></div>`; }
         }
 
         async function createPlace(e) {
             e.preventDefault();
             const form = e.target;
             const formData = new FormData(form);
-            const data = {
-                title: formData.get('title'),
-                description: formData.get('description') || null,
-                created_by: getNickname(),
-                status: 'active'
-            };
+            const data = { title: formData.get('title'), description: formData.get('description') || null, created_by: getNickname(), status: 'active' };
             try {
-                const result = await supabaseFetch('places', {
-                    method: 'POST',
-                    body: JSON.stringify(data)
-                });
-                closeCreatePlaceModal();
-                form.reset();
-                loadPlaces();
-                // 创建成功后打开详情
-                if (result && result[0]) {
-                    openPlaceDetail(result[0].id);
-                }
-            } catch (err) {
-                alert('发布失败: ' + err.message);
-            }
+                const result = await supabaseFetch('places', { method: 'POST', body: JSON.stringify(data) });
+                closeCreatePlaceModal(); form.reset(); loadPlaces();
+                if (result && result[0]) { openPlaceDetail(result[0].id); }
+            } catch (err) { alert('发布失败: ' + err.message); }
         }
 
-        // ============ Place 详情 ============
         let currentPlaceId = null;
-
         async function openPlaceDetail(placeId) {
-            currentPlaceId = placeId;
-            pendingImages = []; // 清空待上传图片
+            currentPlaceId = placeId; pendingImages = [];
             document.getElementById('main-view').style.display = 'none';
             document.getElementById('detail-view').style.display = 'block';
-
             const container = document.getElementById('detail-content');
             container.innerHTML = '<div class="loading">加载中...</div>';
-
             try {
-                // 获取 place 详情
                 const places = await supabaseFetch(`places?id=eq.${placeId}`);
                 if (!places || places.length === 0) throw new Error('未找到');
                 const place = places[0];
-
-                // 获取评论
                 const comments = await supabaseFetch(`place_comments?place_id=eq.${placeId}&order=created_at.asc`);
-
-                container.innerHTML = `
-                    <div class="detail-header">
-                        <h2>${escapeHtml(place.title)}</h2>
-                        <div class="detail-meta">
-                            由 ${escapeHtml(place.created_by || '匿名')} 创建于 ${formatDate(place.created_at)}
-                        </div>
-                    </div>
-                    ${place.description ? `<div class="detail-desc">${escapeHtml(place.description)}</div>` : ''}
-
-                    <div class="comments-section">
-                        <h3>补充信息 (${comments ? comments.length : 0})</h3>
-                        <div id="comments-list">
-                            ${comments && comments.length > 0 ? comments.map(c => `
-                                <div class="comment">
-                                    <div class="comment-header">${escapeHtml(c.created_by || '匿名')} · ${formatDate(c.created_at)}</div>
-                                    <div class="comment-content">${escapeHtml(c.content)}</div>
-                                    ${renderCommentImages(c.image_urls)}
-                                </div>
-                            `).join('') : '<p style="color: #999; font-size: 0.9rem;">暂无补充，来添加第一条吧</p>'}
-                        </div>
-                        
-                        <div class="comment-form-wrapper">
-                            <div class="comment-input-row">
-                                <input type="text" id="comment-input" placeholder="添加补充信息...">
-                                <button class="btn btn-small" id="send-btn" onclick="addComment()">发送</button>
-                            </div>
-                            <div class="image-upload-area">
-                                <label class="image-upload-btn">
-                                    <span>+ 添加图片</span>
-                                    <input type="file" id="image-input" accept="image/jpeg,image/png,image/webp" multiple onchange="handleImageSelect(event)">
-                                </label>
-                                <div class="upload-hint">支持 jpg/png/webp，单张最大 2MB，最多 3 张</div>
-                                <div class="image-preview-list" id="image-preview-list"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } catch (err) {
-                container.innerHTML = `<div class="empty"><p>加载失败: ${err.message}</p></div>`;
-            }
+                container.innerHTML = `<div class="detail-header"><h2>${escapeHtml(place.title)}</h2><div class="detail-meta">由 ${escapeHtml(place.created_by || '匿名')} 创建于 ${formatDate(place.created_at)}</div></div>${place.description ? `<div class="detail-desc">${escapeHtml(place.description)}</div>` : ''}<div class="comments-section"><h3>补充信息 (${comments ? comments.length : 0})</h3><div id="comments-list">${comments && comments.length > 0 ? comments.map(c => `<div class="comment${c.image_urls && c.image_urls.length > 0 ? ' comment-with-image' : ''}"><div class="comment-header">${escapeHtml(c.created_by || '匿名')} · ${formatDate(c.created_at)}</div><div class="comment-content">${escapeHtml(c.content)}</div>${renderCommentImages(c.image_urls)}</div>`).join('') : '<p style="color: #999; font-size: 0.9rem;">暂无补充，来添加第一条吧</p>'}</div><div class="comment-form-wrapper"><div class="comment-input-row"><input type="text" id="comment-input" placeholder="添加补充信息..." onpaste="handlePaste(event)"><button class="btn btn-small" id="send-btn" onclick="addComment()">发送</button></div><div class="image-upload-area"><label class="image-upload-btn"><span>+ 添加图片</span><input type="file" id="image-input" accept="image/jpeg,image/png,image/webp" multiple onchange="handleImageSelect(event)"></label><div class="upload-hint">支持 jpg/png/webp | Ctrl+V 粘贴截图 | 单张 2MB，最多 3 张</div><div class="image-preview-list" id="image-preview-list"></div></div></div></div>`;
+            } catch (err) { container.innerHTML = `<div class="empty"><p>加载失败: ${err.message}</p></div>`; }
         }
 
-        // 渲染评论图片
         function renderCommentImages(imageUrls) {
             if (!imageUrls || imageUrls.length === 0) return '';
-            return `
-                <div class="comment-images">
-                    ${imageUrls.map(url => `<img src="${url}" alt="评论图片" onclick="openLightbox('${url}')">`).join('')}
-                </div>
-            `;
+            return `<div class="comment-images">${imageUrls.map(url => `<img src="${url}" alt="评论图片" onclick="openLightbox('${url}')">`).join('')}</div>`;
         }
 
-        // ============ 图片上传相关 ============
         function handleImageSelect(event) {
             const files = Array.from(event.target.files);
-            
             for (const file of files) {
-                // 检查数量限制
-                if (pendingImages.length >= MAX_IMAGE_COUNT) {
-                    alert(`最多上传 ${MAX_IMAGE_COUNT} 张图片`);
-                    break;
-                }
-                
-                // 检查文件类型
-                if (!ALLOWED_TYPES.includes(file.type)) {
-                    alert(`不支持的文件格式: ${file.name}\n仅支持 jpg/png/webp`);
-                    continue;
-                }
-                
-                // 检查文件大小
-                if (file.size > MAX_IMAGE_SIZE) {
-                    alert(`图片太大: ${file.name}\n单张图片不能超过 2MB`);
-                    continue;
-                }
-                
+                if (pendingImages.length >= MAX_IMAGE_COUNT) { alert(`最多上传 ${MAX_IMAGE_COUNT} 张图片`); break; }
+                if (!ALLOWED_TYPES.includes(file.type)) { alert(`不支持的文件格式: ${file.name}\n仅支持 jpg/png/webp`); continue; }
+                if (file.size > MAX_IMAGE_SIZE) { alert(`图片太大: ${file.name}\n单张图片不能超过 2MB`); continue; }
                 pendingImages.push(file);
             }
-            
-            // 清空 input（允许重复选择同一文件）
             event.target.value = '';
-            
             renderImagePreviews();
         }
 
         function renderImagePreviews() {
             const container = document.getElementById('image-preview-list');
             if (!container) return;
-            
-            container.innerHTML = pendingImages.map((file, index) => `
-                <div class="image-preview-item">
-                    <img src="${URL.createObjectURL(file)}" alt="预览">
-                    <button class="remove-btn" onclick="removeImage(${index})">×</button>
-                </div>
-            `).join('');
+            container.innerHTML = pendingImages.map((file, index) => `<div class="image-preview-item"><img src="${URL.createObjectURL(file)}" alt="预览"><button class="remove-btn" onclick="removeImage(${index})">×</button></div>`).join('');
         }
 
-        function removeImage(index) {
-            pendingImages.splice(index, 1);
-            renderImagePreviews();
+        function removeImage(index) { pendingImages.splice(index, 1); renderImagePreviews(); }
+
+        function handlePaste(event) {
+            const items = event.clipboardData?.items;
+            if (!items) return;
+            let hasImage = false;
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    hasImage = true;
+                    const file = item.getAsFile();
+                    if (!file) continue;
+                    if (pendingImages.length >= MAX_IMAGE_COUNT) { alert(`最多上传 ${MAX_IMAGE_COUNT} 张图片`); break; }
+                    if (!ALLOWED_TYPES.includes(file.type)) { alert(`不支持的文件格式\n仅支持 jpg/png/webp`); continue; }
+                    if (file.size > MAX_IMAGE_SIZE) { alert(`图片太大\n单张图片不能超过 2MB`); continue; }
+                    const namedFile = new File([file], `clipboard_${Date.now()}.png`, { type: file.type });
+                    pendingImages.push(namedFile);
+                }
+            }
+            if (hasImage) { event.preventDefault(); renderImagePreviews(); }
         }
 
         async function addComment() {
             const input = document.getElementById('comment-input');
             const sendBtn = document.getElementById('send-btn');
             const content = input.value.trim();
-            
-            if (!content && pendingImages.length === 0) {
-                alert('请输入内容或添加图片');
-                return;
-            }
-
-            // 禁用按钮，防止重复提交
-            sendBtn.disabled = true;
-            sendBtn.textContent = '发送中...';
-
+            if (!content && pendingImages.length === 0) { alert('请输入内容或添加图片'); return; }
+            sendBtn.disabled = true; sendBtn.textContent = '发送中...';
             try {
-                // 上传图片
                 let imageUrls = [];
                 if (pendingImages.length > 0) {
                     sendBtn.textContent = '上传图片...';
-                    for (const file of pendingImages) {
-                        const url = await uploadImage(file);
-                        imageUrls.push(url);
-                    }
+                    for (const file of pendingImages) { const url = await uploadImage(file); imageUrls.push(url); }
                 }
-
-                // 创建评论
-                await supabaseFetch('place_comments', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        place_id: currentPlaceId,
-                        content: content || '(图片)',
-                        created_by: getNickname(),
-                        image_urls: imageUrls.length > 0 ? imageUrls : null
-                    })
-                });
-                
-                input.value = '';
-                pendingImages = [];
-                openPlaceDetail(currentPlaceId); // 刷新
-            } catch (err) {
-                alert('发送失败: ' + err.message);
-                sendBtn.disabled = false;
-                sendBtn.textContent = '发送';
-            }
+                await supabaseFetch('place_comments', { method: 'POST', body: JSON.stringify({ place_id: currentPlaceId, content: content || '(图片)', created_by: getNickname(), image_urls: imageUrls.length > 0 ? imageUrls : null }) });
+                input.value = ''; pendingImages = []; openPlaceDetail(currentPlaceId);
+            } catch (err) { alert('发送失败: ' + err.message); sendBtn.disabled = false; sendBtn.textContent = '发送'; }
         }
 
-        function closeDetail() {
-            currentPlaceId = null;
-            pendingImages = [];
-            document.getElementById('detail-view').style.display = 'none';
-            document.getElementById('main-view').style.display = 'block';
-            loadPlaces();
-        }
+        function closeDetail() { currentPlaceId = null; pendingImages = []; document.getElementById('detail-view').style.display = 'none'; document.getElementById('main-view').style.display = 'block'; loadPlaces(); }
 
-        // ============ 图片预览 Lightbox ============
-        function openLightbox(url) {
-            document.getElementById('lightbox-img').src = url;
-            document.getElementById('lightbox').classList.add('active');
-        }
+        function openLightbox(url) { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox').classList.add('active'); }
+        function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
-        function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('active');
-        }
-
-        // ESC 关闭 lightbox
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLightbox();
-        });
-
-        // ============ 弹窗控制 ============
         function openCreatePlaceModal() { document.getElementById('create-place-modal').classList.add('active'); }
         function closeCreatePlaceModal() { document.getElementById('create-place-modal').classList.remove('active'); }
         function openCreateEventModal() { alert('聚餐事件功能开发中...'); }
+        document.querySelectorAll('.modal').forEach(modal => { modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); }); });
 
-        // 点击弹窗外部关闭
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
-        });
-
-        // ============ 工具函数 ============
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
+        function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
         function formatDate(dateStr) {
             if (!dateStr) return '';
-            const date = new Date(dateStr);
-            const now = new Date();
-            const diff = now - date;
+            const date = new Date(dateStr); const now = new Date(); const diff = now - date;
             if (diff < 60000) return '刚刚';
             if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
             if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
@@ -666,10 +346,7 @@
             return `${date.getMonth() + 1}/${date.getDate()}`;
         }
 
-        // ============ 初始化 ============
-        if (checkNickname()) {
-            loadPlaces();
-        }
+        if (checkNickname()) { loadPlaces(); }
     </script>
 </body>
 </html>
