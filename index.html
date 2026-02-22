@@ -137,6 +137,7 @@
                                 <input type="checkbox" id="show-archive" onchange="loadPlaces()">
                                 <span>显示留档</span>
                             </label>
+                            <button class="btn btn-small btn-outline" onclick="randomPickPlace()">🎲 为我选择</button>
                             <button class="btn btn-small" onclick="openCreatePlaceModal()">+ 新建</button>
                         </div>
                     </div>
@@ -365,6 +366,15 @@
             pendingImages = [];
             document.getElementById('right-panel').classList.remove('active');
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        }
+
+        function randomPickPlace() {
+            const cards = document.querySelectorAll('#places-list .card[data-id]');
+            if (cards.length === 0) { alert('当前没有可选择的想法'); return; }
+            const randomIndex = Math.floor(Math.random() * cards.length);
+            const randomCard = cards[randomIndex];
+            const placeId = randomCard.getAttribute('data-id');
+            openPlaceDetail(placeId);
         }
 
         function openLightbox(url) { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox').classList.add('active'); }
