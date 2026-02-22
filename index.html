@@ -11,7 +11,18 @@
             background: #f5f5f5;
             min-height: 100vh;
         }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .split-layout { display: flex; gap: 20px; }
+        .left-panel { flex: 0 0 400px; min-width: 0; transition: all 0.3s ease; }
+        .right-panel { flex: 1; min-width: 0; display: none; }
+        .right-panel.active { display: block; }
+        .right-panel-content { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; }
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .left-panel { flex: none; width: 100%; }
+            .left-panel.collapsed { display: none; }
+            .right-panel { width: 100%; }
+        }
         header { text-align: center; padding: 20px 0; }
         header h1 { font-size: 1.6rem; color: #333; }
         header p { color: #888; font-size: 0.9rem; margin-top: 4px; }
@@ -29,6 +40,7 @@
         .btn-block { width: 100%; }
         .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: box-shadow 0.2s; }
         .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .card.active { box-shadow: 0 0 0 2px #667eea, 0 4px 16px rgba(0,0,0,0.08); }
         .card-has-images { background: linear-gradient(135deg, #f0f8ff 0%, #f5f0ff 100%); border-left: 3px solid #667eea; }
         .card h3 { font-size: 1.1rem; color: #333; margin-bottom: 8px; }
         .card-meta { font-size: 0.85rem; color: #888; display: flex; gap: 12px; flex-wrap: wrap; }
@@ -46,9 +58,12 @@
         .form-group label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: #555; font-weight: 500; }
         .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
         .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
-        .detail-header { margin-bottom: 20px; }
+        .detail-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .detail-header-content { flex: 1; }
         .detail-header h2 { font-size: 1.4rem; color: #333; margin-bottom: 8px; }
         .detail-meta { font-size: 0.85rem; color: #888; }
+        .close-detail-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; padding: 0; line-height: 1; }
+        .close-detail-btn:hover { color: #667eea; }
         .detail-desc { font-size: 1rem; color: #555; margin: 16px 0; padding: 12px; background: #f9f9f9; border-radius: 8px; }
         .back-btn { margin-bottom: 16px; color: #667eea; cursor: pointer; font-size: 0.9rem; }
         .back-btn:hover { text-decoration: underline; }
@@ -83,6 +98,8 @@
         .loading { text-align: center; padding: 40px; color: #999; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .section-header h2 { font-size: 1.1rem; color: #555; }
+        .filter-toggle { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #888; cursor: pointer; user-select: none; }
+        .filter-toggle input { cursor: pointer; }
         .placeholder-card { background: #f9f9f9; border: 2px dashed #ddd; text-align: center; padding: 30px; color: #999; }
         footer { text-align: center; padding: 20px; color: #bbb; font-size: 0.75rem; }
     </style>
@@ -106,34 +123,43 @@
             <h1>聚餐小助手</h1>
             <p id="welcome-text"></p>
         </header>
-        <div id="main-view">
-            <div class="tabs">
-                <div class="tab active" data-tab="places" onclick="switchTab('places')">想法池</div>
-                <div class="tab" data-tab="events" onclick="switchTab('events')">聚餐事件</div>
-            </div>
-            <div id="places-section">
-                <div class="section-header">
-                    <h2>大家的想法</h2>
-                    <button class="btn btn-small" onclick="openCreatePlaceModal()">+ 新建</button>
+        <div class="split-layout">
+            <div class="left-panel" id="left-panel">
+                <div class="tabs">
+                    <div class="tab active" data-tab="places" onclick="switchTab('places')">想法池</div>
+                    <div class="tab" data-tab="events" onclick="switchTab('events')">聚餐事件</div>
                 </div>
-                <div id="places-list"><div class="loading">加载中...</div></div>
-            </div>
-            <div id="events-section" style="display: none;">
-                <div class="section-header">
-                    <h2>近期聚餐</h2>
-                    <button class="btn btn-small btn-outline" onclick="openCreateEventModal()">+ 发起</button>
+                <div id="places-section">
+                    <div class="section-header">
+                        <h2>大家的想法</h2>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label class="filter-toggle">
+                                <input type="checkbox" id="show-archive" onchange="loadPlaces()">
+                                <span>显示留档</span>
+                            </label>
+                            <button class="btn btn-small" onclick="openCreatePlaceModal()">+ 新建</button>
+                        </div>
+                    </div>
+                    <div id="places-list"><div class="loading">加载中...</div></div>
                 </div>
-                <div id="events-list">
-                    <div class="placeholder-card">
-                        <p>聚餐事件功能开发中</p>
-                        <p style="font-size: 0.85rem; margin-top: 8px;">敬请期待...</p>
+                <div id="events-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>近期聚餐</h2>
+                        <button class="btn btn-small btn-outline" onclick="openCreateEventModal()">+ 发起</button>
+                    </div>
+                    <div id="events-list">
+                        <div class="placeholder-card">
+                            <p>聚餐事件功能开发中</p>
+                            <p style="font-size: 0.85rem; margin-top: 8px;">敬请期待...</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="detail-view" style="display: none;">
-            <div class="back-btn" onclick="closeDetail()">← 返回列表</div>
-            <div id="detail-content"></div>
+            <div class="right-panel" id="right-panel">
+                <div class="right-panel-content">
+                    <div id="detail-content"></div>
+                </div>
+            </div>
         </div>
         <footer>Created by MiniMax Agent</footer>
     </div>
@@ -207,9 +233,15 @@
 
         async function loadPlaces() {
             const container = document.getElementById('places-list');
+            const showArchive = document.getElementById('show-archive')?.checked || false;
             try {
-                const places = await supabaseFetch('places?status=eq.active');
+                let places = await supabaseFetch('places?status=eq.active');
                 if (!places || places.length === 0) { container.innerHTML = `<div class="empty"><p>还没有任何想法</p><button class="btn" onclick="openCreatePlaceModal()">+ 添加第一个</button></div>`; return; }
+                // 过滤留档帖子（以 [留档] 开头的标题）
+                if (!showArchive) {
+                    places = places.filter(p => !p.title.startsWith('[留档]'));
+                }
+                if (places.length === 0) { container.innerHTML = `<div class="empty"><p>没有可显示的想法</p><p style="font-size: 0.85rem; color: #999; margin-top: 8px;">勾选"显示留档"可查看留档帖子</p></div>`; return; }
                 const placeIds = places.map(p => p.id);
                 const comments = await supabaseFetch(`place_comments?place_id=in.(${placeIds.join(',')})`);
                 const commentCounts = {};
@@ -231,7 +263,7 @@
                     const bTime = latestCommentTime[b.id] || new Date(b.created_at).getTime();
                     return bTime - aTime;
                 });
-                container.innerHTML = places.map(place => `<div class="card${hasImageComment[place.id] ? ' card-has-images' : ''}" onclick="openPlaceDetail('${place.id}')"><h3>${escapeHtml(place.title)}</h3>${place.description ? `<div class="card-desc">${escapeHtml(place.description)}</div>` : ''}<div class="card-meta"><span>${escapeHtml(place.created_by || '匿名')}</span><span>${commentCounts[place.id] || 0} 条补充</span><span>${formatDate(place.created_at)}</span></div></div>`).join('');
+                container.innerHTML = places.map(place => `<div class="card${hasImageComment[place.id] ? ' card-has-images' : ''}${currentPlaceId === place.id ? ' active' : ''}" data-id="${place.id}" onclick="openPlaceDetail('${place.id}')"><h3>${escapeHtml(place.title)}</h3>${place.description ? `<div class="card-desc">${escapeHtml(place.description)}</div>` : ''}<div class="card-meta"><span>${escapeHtml(place.created_by || '匿名')}</span><span>${commentCounts[place.id] || 0} 条补充</span><span>${formatDate(place.created_at)}</span></div></div>`).join('');
             } catch (err) { console.error('加载失败:', err); container.innerHTML = `<div class="empty"><p>加载失败: ${err.message}</p></div>`; }
         }
 
@@ -250,8 +282,12 @@
         let currentPlaceId = null;
         async function openPlaceDetail(placeId) {
             currentPlaceId = placeId; pendingImages = [];
-            document.getElementById('main-view').style.display = 'none';
-            document.getElementById('detail-view').style.display = 'block';
+            // 高亮选中的卡片
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            const activeCard = document.querySelector(`.card[data-id="${placeId}"]`);
+            if (activeCard) activeCard.classList.add('active');
+            // 显示右侧面板
+            document.getElementById('right-panel').classList.add('active');
             const container = document.getElementById('detail-content');
             container.innerHTML = '<div class="loading">加载中...</div>';
             try {
@@ -259,7 +295,7 @@
                 if (!places || places.length === 0) throw new Error('未找到');
                 const place = places[0];
                 const comments = await supabaseFetch(`place_comments?place_id=eq.${placeId}&order=created_at.asc`);
-                container.innerHTML = `<div class="detail-header"><h2>${escapeHtml(place.title)}</h2><div class="detail-meta">由 ${escapeHtml(place.created_by || '匿名')} 创建于 ${formatDate(place.created_at)}</div></div>${place.description ? `<div class="detail-desc">${escapeHtml(place.description)}</div>` : ''}<div class="comments-section"><h3>补充信息 (${comments ? comments.length : 0})</h3><div id="comments-list">${comments && comments.length > 0 ? comments.map(c => `<div class="comment${c.image_urls && c.image_urls.length > 0 ? ' comment-with-image' : ''}"><div class="comment-header">${escapeHtml(c.created_by || '匿名')} · ${formatDate(c.created_at)}</div><div class="comment-content">${escapeHtml(c.content)}</div>${renderCommentImages(c.image_urls)}</div>`).join('') : '<p style="color: #999; font-size: 0.9rem;">暂无补充，来添加第一条吧</p>'}</div><div class="comment-form-wrapper"><div class="comment-input-row"><input type="text" id="comment-input" placeholder="添加补充信息..." onpaste="handlePaste(event)"><button class="btn btn-small" id="send-btn" onclick="addComment()">发送</button></div><div class="image-upload-area"><label class="image-upload-btn"><span>+ 添加图片</span><input type="file" id="image-input" accept="image/jpeg,image/png,image/webp" multiple onchange="handleImageSelect(event)"></label><div class="upload-hint">支持 jpg/png/webp | Ctrl+V 粘贴截图 | 单张 2MB，最多 3 张</div><div class="image-preview-list" id="image-preview-list"></div></div></div></div>`;
+                container.innerHTML = `<div class="detail-header"><div class="detail-header-content"><h2>${escapeHtml(place.title)}</h2><div class="detail-meta">由 ${escapeHtml(place.created_by || '匿名')} 创建于 ${formatDate(place.created_at)}</div></div><button class="close-detail-btn" onclick="closeDetail()">&times;</button></div>${place.description ? `<div class="detail-desc">${escapeHtml(place.description)}</div>` : ''}<div class="comments-section"><h3>补充信息 (${comments ? comments.length : 0})</h3><div id="comments-list">${comments && comments.length > 0 ? comments.map(c => `<div class="comment${c.image_urls && c.image_urls.length > 0 ? ' comment-with-image' : ''}"><div class="comment-header">${escapeHtml(c.created_by || '匿名')} · ${formatDate(c.created_at)}</div><div class="comment-content">${escapeHtml(c.content)}</div>${renderCommentImages(c.image_urls)}</div>`).join('') : '<p style="color: #999; font-size: 0.9rem;">暂无补充，来添加第一条吧</p>'}</div><div class="comment-form-wrapper"><div class="comment-input-row"><input type="text" id="comment-input" placeholder="添加补充信息..." onpaste="handlePaste(event)"><button class="btn btn-small" id="send-btn" onclick="addComment()">发送</button></div><div class="image-upload-area"><label class="image-upload-btn"><span>+ 添加图片</span><input type="file" id="image-input" accept="image/jpeg,image/png,image/webp" multiple onchange="handleImageSelect(event)"></label><div class="upload-hint">支持 jpg/png/webp | Ctrl+V 粘贴截图 | 单张 2MB，最多 3 张</div><div class="image-preview-list" id="image-preview-list"></div></div></div></div>`;
             } catch (err) { container.innerHTML = `<div class="empty"><p>加载失败: ${err.message}</p></div>`; }
         }
 
@@ -324,7 +360,12 @@
             } catch (err) { alert('发送失败: ' + err.message); sendBtn.disabled = false; sendBtn.textContent = '发送'; }
         }
 
-        function closeDetail() { currentPlaceId = null; pendingImages = []; document.getElementById('detail-view').style.display = 'none'; document.getElementById('main-view').style.display = 'block'; loadPlaces(); }
+        function closeDetail() {
+            currentPlaceId = null;
+            pendingImages = [];
+            document.getElementById('right-panel').classList.remove('active');
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        }
 
         function openLightbox(url) { document.getElementById('lightbox-img').src = url; document.getElementById('lightbox').classList.add('active'); }
         function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
