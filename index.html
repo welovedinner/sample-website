@@ -22,6 +22,12 @@
             .left-panel { flex: none; width: 100%; }
             .left-panel.collapsed { display: none; }
             .right-panel { width: 100%; }
+            .close-detail-btn { display: none; }
+        }
+        .mobile-back-btn { display: none; margin-bottom: 16px; color: #667eea; cursor: pointer; font-size: 0.95rem; padding: 8px 0; }
+        .mobile-back-btn:hover { text-decoration: underline; }
+        @media (max-width: 900px) {
+            .mobile-back-btn { display: flex; align-items: center; gap: 4px; }
         }
         header { text-align: center; padding: 20px 0; }
         header h1 { font-size: 1.6rem; color: #333; }
@@ -287,8 +293,9 @@
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             const activeCard = document.querySelector(`.card[data-id="${placeId}"]`);
             if (activeCard) activeCard.classList.add('active');
-            // 显示右侧面板
+            // 显示右侧面板，移动端隐藏左侧列表
             document.getElementById('right-panel').classList.add('active');
+            document.getElementById('left-panel').classList.add('collapsed');
             const container = document.getElementById('detail-content');
             container.innerHTML = '<div class="loading">加载中...</div>';
             try {
@@ -296,8 +303,8 @@
                 if (!places || places.length === 0) throw new Error('未找到');
                 const place = places[0];
                 const comments = await supabaseFetch(`place_comments?place_id=eq.${placeId}&order=created_at.asc`);
-                container.innerHTML = `<div class="detail-header"><div class="detail-header-content"><h2>${escapeHtml(place.title)}</h2><div class="detail-meta">由 ${escapeHtml(place.created_by || '匿名')} 创建于 ${formatDate(place.created_at)}</div></div><button class="close-detail-btn" onclick="closeDetail()">&times;</button></div>${place.description ? `<div class="detail-desc">${escapeHtml(place.description)}</div>` : ''}<div class="comments-section"><h3>补充信息 (${comments ? comments.length : 0})</h3><div id="comments-list">${comments && comments.length > 0 ? comments.map(c => `<div class="comment${c.image_urls && c.image_urls.length > 0 ? ' comment-with-image' : ''}"><div class="comment-header">${escapeHtml(c.created_by || '匿名')} · ${formatDate(c.created_at)}</div><div class="comment-content">${escapeHtml(c.content)}</div>${renderCommentImages(c.image_urls)}</div>`).join('') : '<p style="color: #999; font-size: 0.9rem;">暂无补充，来添加第一条吧</p>'}</div><div class="comment-form-wrapper"><div class="comment-input-row"><input type="text" id="comment-input" placeholder="添加补充信息..." onpaste="handlePaste(event)"><button class="btn btn-small" id="send-btn" onclick="addComment()">发送</button></div><div class="image-upload-area"><label class="image-upload-btn"><span>+ 添加图片</span><input type="file" id="image-input" accept="image/jpeg,image/png,image/webp" multiple onchange="handleImageSelect(event)"></label><div class="upload-hint">支持 jpg/png/webp | Ctrl+V 粘贴截图 | 单张 2MB，最多 3 张</div><div class="image-preview-list" id="image-preview-list"></div></div></div></div>`;
-            } catch (err) { container.innerHTML = `<div class="empty"><p>加载失败: ${err.message}</p></div>`; }
+                container.innerHTML = `<div class="mobile-back-btn" onclick="closeDetail()">← 返回列表</div><div class="detail-header"><div class="detail-header-content"><h2>${escapeHtml(place.title)}</h2><div class="detail-meta">由 ${escapeHtml(place.created_by || '匿名')} 创建于 ${formatDate(place.created_at)}</div></div><button class="close-detail-btn" onclick="closeDetail()">&times;</button></div>${place.description ? `<div class="detail-desc">${escapeHtml(place.description)}</div>` : ''}<div class="comments-section"><h3>补充信息 (${comments ? comments.length : 0})</h3><div id="comments-list">${comments && comments.length > 0 ? comments.map(c => `<div class="comment${c.image_urls && c.image_urls.length > 0 ? ' comment-with-image' : ''}"><div class="comment-header">${escapeHtml(c.created_by || '匿名')} · ${formatDate(c.created_at)}</div><div class="comment-content">${escapeHtml(c.content)}</div>${renderCommentImages(c.image_urls)}</div>`).join('') : '<p style="color: #999; font-size: 0.9rem;">暂无补充，来添加第一条吧</p>'}</div><div class="comment-form-wrapper"><div class="comment-input-row"><input type="text" id="comment-input" placeholder="添加补充信息..." onpaste="handlePaste(event)"><button class="btn btn-small" id="send-btn" onclick="addComment()">发送</button></div><div class="image-upload-area"><label class="image-upload-btn"><span>+ 添加图片</span><input type="file" id="image-input" accept="image/jpeg,image/png,image/webp" multiple onchange="handleImageSelect(event)"></label><div class="upload-hint">支持 jpg/png/webp | Ctrl+V 粘贴截图 | 单张 2MB，最多 3 张</div><div class="image-preview-list" id="image-preview-list"></div></div></div></div>`;
+            } catch (err) { container.innerHTML = `<div class="mobile-back-btn" onclick="closeDetail()">← 返回列表</div><div class="empty"><p>加载失败: ${err.message}</p></div>`; }
         }
 
         function renderCommentImages(imageUrls) {
@@ -365,6 +372,7 @@
             currentPlaceId = null;
             pendingImages = [];
             document.getElementById('right-panel').classList.remove('active');
+            document.getElementById('left-panel').classList.remove('collapsed');
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         }
 
