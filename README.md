@@ -4,7 +4,9 @@
 
 ## 在线访问
 
-🔗 **线上版本**：https://pqvu6zadvjib.space.minimax.io
+🔗 **想法池**: https://welovedinner.github.io/sample-website/
+
+🔗 **聚餐事件**: https://welovedinner.github.io/sample-website/dinner-planner/
 
 ## 项目背景
 
@@ -22,6 +24,11 @@
 - ✅ 评论功能（对餐厅发表看法）
 - ✅ 伪用户系统（localStorage 存储昵称）
 
+### A组 - 聚餐事件
+- ✅ 发起聚餐活动
+- ✅ 加入聚餐
+- ✅ 查看参与者列表
+
 ### 技术实现
 - ✅ 纯前端 HTML/CSS/JS，无框架依赖
 - ✅ Supabase 后端（PostgreSQL + REST API）
@@ -35,23 +42,26 @@
 | 前端 | HTML5 + CSS3 + Vanilla JS |
 | 后端 | Supabase (PostgreSQL) |
 | API | Supabase REST API |
-| 部署 | MiniMax Space |
+| 部署 | GitHub Pages |
 
 ## 数据库结构
 
 ```
-places          # 餐厅/地点（想法池）
-├── id, name, description
-├── created_by  # 伪用户昵称
+places              # 餐厅/地点（想法池）
+├── id, title, description
+├── created_by      # 伪用户昵称
 └── created_at
 
-place_comments  # 餐厅评论
+place_comments      # 餐厅评论
 ├── id, place_id, content
 ├── created_by
 └── created_at
 
-events          # 聚餐事件（待实现）
-event_participants  # 参与者（待实现）
+events              # 聚餐事件
+├── id, title, date, time, location
+├── organizer, note
+├── participants
+└── created_at
 ```
 
 ## 文档索引
@@ -62,13 +72,13 @@ event_participants  # 参与者（待实现）
 | [🚀 P2 TODO](docs/P2TODO.md) | 二期功能：排序、点赞等 |
 | [📖 Glossary](docs/glossary.md) | 核心概念：A组/B组、Place、Event |
 | [📄 PRD](PRD.md) | 产品需求文档 |
+| [🔧 开发文档](dinner-planner/DEVELOPMENT.md) | 聚餐事件功能开发文档 |
 
 ## 未来规划
 
 详见 [P2TODO.md](docs/P2TODO.md)：
 - 排序功能（时间、评论数、点赞数）
 - 点赞系统
-- A组功能（发起聚餐、报名参与）
 
 ## 本地开发
 
