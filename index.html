@@ -159,10 +159,6 @@
                     <div class="section-header">
                         <h2>大家的想法</h2>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <label class="filter-toggle">
-                                <input type="checkbox" id="show-archive" onchange="loadPlaces()">
-                                <span>显示留档</span>
-                            </label>
                             <button class="btn btn-small btn-outline" onclick="randomPickPlace()">🎲 为我选择</button>
                             <button class="btn btn-small" onclick="openCreatePlaceModal()">+ 新建</button>
                         </div>
@@ -262,15 +258,9 @@
 
         async function loadPlaces() {
             const container = document.getElementById('places-list');
-            const showArchive = document.getElementById('show-archive')?.checked || false;
             try {
                 let places = await supabaseFetch('places?status=eq.active');
                 if (!places || places.length === 0) { container.innerHTML = `<div class="empty"><p>还没有任何想法</p><button class="btn" onclick="openCreatePlaceModal()">+ 添加第一个</button></div>`; return; }
-                // 过滤留档帖子（以 [留档] 开头的标题）
-                if (!showArchive) {
-                    places = places.filter(p => !p.title.startsWith('[留档]'));
-                }
-                if (places.length === 0) { container.innerHTML = `<div class="empty"><p>没有可显示的想法</p><p style="font-size: 0.85rem; color: #999; margin-top: 8px;">勾选"显示留档"可查看留档帖子</p></div>`; return; }
                 const placeIds = places.map(p => p.id);
 
                 // 获取评论数据
@@ -311,8 +301,25 @@
                         hasImageComment[c.place_id] = true;
                     }
                 });
-                // 按最新活动时间排序（最新评论时间 或 创建时间）
+                // 排序：1. 有近期想去的优先 2. 有图的次之 3. 按最新活动时间排序
+                const now = Date.now();
                 places.sort((a, b) => {
+                    const aWish = wishData[a.id];
+                    const bWish = wishData[b.id];
+                    const aHasRecentWish = aWish?.hasRecent || false;
+                    const bHasRecentWish = bWish?.hasRecent || false;
+                    const aHasImage = hasImageComment[a.id] || false;
+                    const bHasImage = hasImageComment[b.id] || false;
+
+                    // 第一优先级：有近期想去的置顶
+                    if (aHasRecentWish !== bHasRecentWish) {
+                        return bHasRecentWish ? 1 : -1;
+                    }
+                    // 第二优先级：有图的次之
+                    if (aHasImage !== bHasImage) {
+                        return bHasImage ? 1 : -1;
+                    }
+                    // 第三优先级：按最新活动时间
                     const aTime = latestCommentTime[a.id] || new Date(a.created_at).getTime();
                     const bTime = latestCommentTime[b.id] || new Date(b.created_at).getTime();
                     return bTime - aTime;
