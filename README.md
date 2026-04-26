@@ -23,6 +23,7 @@
 - ✅ 查看餐厅详情
 - ✅ 评论功能（对餐厅发表看法）
 - ✅ 伪用户系统（localStorage 存储昵称）
+- ✅ **想去功能**（表达近期想去某地的意愿，近一个月内有人想去会特殊展示）
 
 ### A组 - 聚餐事件
 - ✅ 发起聚餐活动
@@ -56,6 +57,11 @@ place_comments      # 餐厅评论
 ├── id, place_id, content
 ├── created_by
 └── created_at
+
+place_wishes        # 想去记录（表达近期想去某地的意愿）
+├── id, place_id
+├── created_by      # 用户昵称
+└── created_at      # 时间戳，用于判断是否近一个月
 
 events              # 聚餐事件
 ├── id, title, date, time, location
